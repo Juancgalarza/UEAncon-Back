@@ -13,7 +13,7 @@ class Usuario extends Model
 
     protected $table = "usuarios";
     protected $hidden = ['conf_clave','clave'];
-    protected $fillable = ['persona_id','rol_id','usuario','img','clave','conf_clave','estado'];
+    protected $fillable = ['persona_id','rol_id','usuario','correo','img','clave','conf_clave','estado'];
     public $timestamps = false;
     
     //Muchos a uno --- uno a muchos(Inverso)

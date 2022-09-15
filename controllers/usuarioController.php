@@ -9,6 +9,7 @@ require_once 'models/usuarioModel.php';
 require_once 'models/personaModel.php';
 require_once 'controllers/personaController.php';
 require_once 'controllers/rolController.php';
+require_once 'models/sexoModel.php';
 
 class UsuarioController
 {
@@ -28,7 +29,6 @@ class UsuarioController
     public function login2(Request $request)
     {
         $data = $request->input('login');
-
         $entrada = $data->entrada;
         $clave = $data->clave;
         $encriptar = hash('sha256', $clave);
@@ -54,8 +54,7 @@ class UsuarioController
                     'mensaje' => 'Falta datos',
                 ];
             } else {
-                $usuario = Usuario::where('usuario', $entrada)->get()->first();
-                $persona = Persona::where('correo', $entrada)->get()->first();
+                $usuario = Usuario::where('usuario', $entrada)->orWhere('correo', $entrada)->get()->first();
 
                 if ($usuario) { //x usuario
                     if ($this->checkValidator($encriptar, $usuario->clave)) {
@@ -96,48 +95,10 @@ class UsuarioController
                             'mensaje' => 'credenciales incorrecta'
                         ];
                     }
-                } else if ($persona) { //x correo
-                    $_user = Usuario::where('persona_id', $persona->id)->get()->first();
-                    $_user['persona'] = $persona;
-
-                    if ($this->checkValidator($encriptar, $_user->clave)) {
-                        //estudiante id
-                        $estudiante = $persona->estudiante;
-                        $est_id = [];
-                        foreach ($estudiante as $est) {
-                            $est_id = $est->id;
-                        }
-
-                        //docente id
-                        $_docente = $persona->docente;
-                        $_doc_id = [];
-                        foreach ($_docente as $do) {
-                            $_doc_id = $do->id;
-                        }
-
-                        $rol = $_user->rol;
-                        $per = Persona::find($_user->persona_id);
-                        $nombre = $per->nombres . ' ' . $per->apellidos;
-
-                        $response = [
-                            'status' => true,
-                            'mensaje' => 'Acceso al sistema',
-                            'rol' => $rol,
-                            'persona' => $nombre,
-                            'usuario' => $_user,
-                            'estudiante' => $est_id,
-                            'docente' => $_doc_id
-                        ];
-                    } else {
-                        $response = [
-                            'status' => false,
-                            'mensaje' => 'credenciales incorrecta'
-                        ];
-                    }
                 } else {
                     $response = [
                         'status' => false,
-                        'mensaje' => 'credenciales incorrecta'
+                        'mensaje' => 'El usuario no se encuentra en la Base de Datos'
                     ];
                 }
             }
@@ -153,19 +114,17 @@ class UsuarioController
         $response = [];
 
         if ($usuario) {
+            $usuario->persona->sexo;
+
             $response = [
                 'status' => true,
                 'usuario' => $usuario,
-                'persona' => $usuario->persona,
-                'rol' => $usuario->rol,
             ];
         } else {
             $response = [
                 'status' => false,
                 'mensaje' => 'No se encuentra el usuario',
                 'usuario' => null,
-                'persona' => null,
-                'rol' => null
             ];
         }
         echo json_encode($response);
@@ -200,6 +159,7 @@ class UsuarioController
             $usuario->persona_id = $id_pers;
             $usuario->rol_id = $user->rol_id;
             $usuario->usuario = $user->usuario;
+            $usuario->correo = $user->correo;
             $usuario->img = $user->img;
             $usuario->clave = $encriptar;
             $usuario->conf_clave = $encriptar;
@@ -250,24 +210,6 @@ class UsuarioController
         echo json_encode($response);
     }
 
-
-    private function generarDatos($persona)
-    {
-
-        $pers = Persona::find($persona);
-        $cedula =  $pers->cedula;
-        $nombrePersonales = $pers->nombres . '-' . $pers->apellidos;
-
-        $nombre = $cedula . '-' . $nombrePersonales . '.png';
-        $auxCodigo = str_replace(' ', '', $nombre);
-        $codigo = md5(sha1($auxCodigo));
-
-        $array = [$nombre, $codigo];
-        return $array;
-        //$qr =  QRcode::png($cedula,$nombrePersonales,QR_ECLEVEL_L,10,2);
-    }
-
-
     public function subirFichero($file)
     {
         $this->cors->corsJson();
@@ -299,7 +241,7 @@ class UsuarioController
             $url = BASE . 'resources/usuarios/' . $u->img;
             //$estado = $u->estado == 'A' '<span class="badge bg-success">Activado</span>'?
             $icono = $u->estado == 'I' ? '<i class="fa fa-check-circle fa-lg"></i>' : '<i class="fa fa-trash fa-lg"></i>';
-            $clase = $u->estado == 'I' ? 'btn-success btn' : 'btn-danger btn-sm';
+            $clase = $u->estado == 'I' ? 'btn-success btn-sm' : 'btn-danger btn-sm';
             $other = $u->estado == 'A' ? 0 : 1;
 
             $botones = '<div class="btn-group">
@@ -316,9 +258,13 @@ class UsuarioController
                 1 => '<div class="box-img-usuario"><img src=' . "$url" . '></div>',
                 2 => $u->persona->nombres,
                 3 => $u->persona->apellidos,
-                4 => $u->usuario,
-                5 => $u->rol->cargo,
-                6 => $botones,
+                4 => $u->persona->celular,
+                5 => $u->persona->direccion     ,
+                6 => $u->usuario,
+                7 => $u->correo,
+                8 => $u->rol->cargo,
+                9 => $u->persona->sexo->sexo,
+                10 => $botones,
             ];
             $i++;
         }
@@ -331,7 +277,6 @@ class UsuarioController
         ];
         echo json_encode($result);
     }
-
 
     public function contar()
     {
@@ -356,7 +301,6 @@ class UsuarioController
         echo json_encode($response);
     }
 
-    //post
     public function editar(Request $request)
     {
 
@@ -365,20 +309,23 @@ class UsuarioController
 
         $id = intval($usuRequest->id);
         $persona_id = intval($usuRequest->persona_id);
-        $rol_id = intval($usuRequest->rol_id);
         $usuario = ucfirst($usuRequest->usuario);
+        $correo = $usuRequest->correo;
 
         $response = [];
         $usu = Usuario::find($id);
         if ($usuRequest) {
             if ($usu) {
                 $usu->persona_id = $persona_id;
-                $usu->rol_id = $rol_id;
                 $usu->usuario = $usuario;
+                $usu->correo = $correo;
 
                 $persona = Persona::find($usu->persona_id);
+                $persona->sexo_id = intval($usuRequest->sexo_id);
                 $persona->nombres = ucfirst($usuRequest->nombres);
                 $persona->apellidos = ucfirst($usuRequest->apellidos);
+                $persona->celular = $usuRequest->celular;
+                $persona->direccion = ucfirst($usuRequest->direccion);
                 $persona->save();
                 $usu->save();
 

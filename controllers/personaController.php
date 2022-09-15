@@ -62,14 +62,12 @@ class PersonaController
 
         if ($buscar == null) {
             $persona = new Persona;
-
-            //seteando campos o rellenando el modelo
+            $persona->sexo_id = intval($data->sexo_id);
             $persona->cedula = $data->cedula;
-            $persona->nombres = $data->nombres;
-            $persona->apellidos = $data->apellidos;
-            $persona->telefono = $data->telefono;
-            $persona->correo = $data->correo;
-            $persona->direccion = $data->direccion;
+            $persona->nombres = ucfirst($data->nombres);
+            $persona->apellidos = ucfirst($data->apellidos);
+            $persona->celular = $data->celular;
+            $persona->direccion = ucfirst($data->direccion);
             $persona->estado = 'A';
 
             if ($persona->save()) {

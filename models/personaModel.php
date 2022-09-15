@@ -5,9 +5,7 @@ require_once 'core/conexion.php';
 require_once 'models/usuarioModel.php';
 require_once 'models/estudianteModel.php';
 require_once 'models/docenteModel.php';
-
- 
-
+require_once 'models/sexoModel.php';
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +14,7 @@ class Persona extends Model
 {
 
     protected $table = "persona";
-    protected $fillable = ['cedula', 'nombres', 'apellidos', 'telefono', 'correo', 'direccion', 'estado'];
+    protected $fillable = ['sexo_id','cedula','nombres','apellidos','celular','direccion','estado'];
     public $timestamps = false;
     
     //uno a muchos
@@ -32,6 +30,11 @@ class Persona extends Model
     public function docente()
     {
         return $this->hasMany(Docente::class);
+    }
+
+    public function sexo()
+    {
+        return $this->belongsTo(Sexo::class);
     }
  
 
