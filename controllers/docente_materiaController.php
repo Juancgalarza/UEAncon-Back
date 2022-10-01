@@ -25,19 +25,21 @@ class Docente_MateriaController
         $response = [];
 
         if ($datos) {
+            $periodo_id = intval($datos->periodo_id);
             $docente_id = intval($datos->docente_id);
             $materia_id = intval($datos->materia_id);
             $curso_id = intval($datos->curso_id);
             $paralelo_id = intval($datos->paralelo_id);
 
             $nuevoDocenteMateria = new Docente_Materia();
+            $nuevoDocenteMateria->periodo_id = $periodo_id;
             $nuevoDocenteMateria->docente_id = $docente_id;
             $nuevoDocenteMateria->materia_id = $materia_id;
             $nuevoDocenteMateria->curso_id = $curso_id;
             $nuevoDocenteMateria->paralelo_id = $paralelo_id;
             $nuevoDocenteMateria->estado = 'A';
 
-            $existeMateria = Docente_Materia::where('materia_id', $materia_id)->where('docente_id',$docente_id)->where('curso_id',$curso_id)->where('paralelo_id',$paralelo_id)->get()->first();
+            $existeMateria = Docente_Materia::where('periodo_id', $periodo_id)->where('materia_id', $materia_id)->where('docente_id',$docente_id)->where('curso_id',$curso_id)->where('paralelo_id',$paralelo_id)->get()->first();
 
             if ($existeMateria) {
                 $response = [
@@ -69,11 +71,11 @@ class Docente_MateriaController
         echo json_encode($response);
     }
 
-    public function dataTableAsignaciones()
+    public function dataTableAsignaciones($params)
     {
         $this->cors->corsJson();
-
-        $dataDocenteMateria = Docente_Materia::where('estado', 'A')->orderBy('id')->get();
+        $periodo_id = intval($params['periodo_id']);
+        $dataDocenteMateria = Docente_Materia::where('periodo_id',$periodo_id)->where('estado', 'A')->orderBy('id')->get();
      
         $data = [];    $i = 1;
 
@@ -115,6 +117,7 @@ class Docente_MateriaController
             $response = [
                 'status' => true,
                 'mensaje' => 'Se ha borrado la Asignación',
+                'docente_materia' => $docMat,
             ];
         }else {
             $response = [

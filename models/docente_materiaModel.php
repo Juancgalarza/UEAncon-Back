@@ -6,14 +6,20 @@ require_once 'models/docenteModel.php';
 require_once 'models/materiaModel.php';
 require_once 'models/cursoModel.php';
 require_once 'models/paraleloModel.php';
+require_once 'models/periodoModel.php';
  
 use Illuminate\Database\Eloquent\Model;
 
 class Docente_Materia extends Model
 {
     protected $table = "docente_materia";
-    protected $fillable = ['docente_id','materia_id','curso_id','paralelo_id','estado'];
+    protected $fillable = ['periodo_id','docente_id','materia_id','curso_id','paralelo_id','estado'];
     public $timestamps = false;
+
+    public function periodo()
+    {
+        return $this->belongsTo(Periodo::class);
+    }
 
     public function docente()
     {

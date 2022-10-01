@@ -17,6 +17,9 @@ class Curso_MateriaAccion
                 }else
                 if ($ruta == '/curso_materia/datatableAsignaciones') {
                     Route::get('/curso_materia/datatableAsignaciones', 'curso_materiaController@dataTableAsignaciones');
+                }else
+                if ($ruta == '/curso_materia/datatableMateriaxCurso' && $params) {
+                    Route::get('/curso_materia/datatableMateriaxCurso/:curso_id', 'curso_materiaController@datatableMateriaxCurso',$params);
                 }else {
                     ErrorClass::e(404, "La ruta no existe");
                 }

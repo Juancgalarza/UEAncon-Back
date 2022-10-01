@@ -21,8 +21,8 @@ class Docente_MateriaAccion
                 if ($ruta == '/docente_materia/materiaCursoParalelo'&& $params) {
                     Route::get('/docente_materia/materiaCursoParalelo/:docente_id', 'docente_materiaController@listarmateriacurso', $params);
                 }else
-                if ($ruta == '/docente_materia/datatableAsignaciones') {
-                    Route::get('/docente_materia/datatableAsignaciones', 'docente_materiaController@dataTableAsignaciones');
+                if ($ruta == '/docente_materia/datatableAsignaciones' && $params) {
+                    Route::get('/docente_materia/datatableAsignaciones/:periodo_id', 'docente_materiaController@dataTableAsignaciones',$params);
                 }else {
                     ErrorClass::e(404, "La ruta no existe");
                 }

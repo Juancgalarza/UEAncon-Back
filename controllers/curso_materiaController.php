@@ -118,4 +118,38 @@ class Curso_MateriaController
         echo json_encode($response);
     }
 
+    public function datatableMateriaxCurso($params){
+        $this->cors->corsJson();
+        $curso_id = intval($params['curso_id']);
+
+        $dataM = Curso_Materia::where('curso_id',$curso_id)->where('estado', 'A')->orderBy('id')->get();
+     
+        $data = [];    $i = 1;
+
+        foreach ($dataM as $md) {
+            $botones = '<div class="btn-group">
+                            <button class="btn btn-warning btn-sm" onclick="seleccionarMateria(' . $md->materia_id . ')">
+                            <i class="fa fa-check fa-lg"></i>
+                            </button>
+                       
+                        </div>';
+
+            $data[] = [
+                0 => $i,
+                1 => $md->materia->nombre_materia,
+                2 => $botones,
+            ];
+            $i++;
+        }
+
+        $result = [
+            'sEcho' => 1,
+            'iTotalRecords' => count($data),
+            'iTotalDisplayRecords' => count($data),
+            'aaData' => $data,
+        ];
+        echo json_encode($result);
+
+    }
+
 }

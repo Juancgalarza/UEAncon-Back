@@ -233,7 +233,7 @@ class UsuarioController
     {
         $this->cors->corsJson();
 
-        $usuarios = Usuario::where('estado', 'A')->orderBy('id', 'desc')->get();
+        $usuarios = Usuario::where('rol_id','<>',2)->where('estado', 'A')->orderBy('id', 'desc')->get();
         $data = [];
         $i = 1;
 

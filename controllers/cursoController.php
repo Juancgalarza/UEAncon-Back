@@ -46,6 +46,7 @@ class CursoController
         $response = [];
 
         if ($curso) {
+            $curso->jornada;
             $response = [
                 'status' => true,
                 'curso' => $curso,
@@ -77,7 +78,10 @@ class CursoController
                 ];
             } else {
                 $nuevoCurso = new Curso();
+                $nuevoCurso->jornada_id = intval($cursoRequest->jornada_id);
                 $nuevoCurso->nombre_curso = ucfirst($cursoRequest->nombre_curso);
+                $nuevoCurso->capacidad = intval($cursoRequest->capacidad);
+                $nuevoCurso->total_estudiantes = 0;
                 $nuevoCurso->estado = 'A';
 
                 if ($nuevoCurso->save()) {
@@ -125,7 +129,10 @@ class CursoController
             $data[] = [
                 0 => $i,
                 1 => $c->nombre_curso,
-                2 => $botones,
+                2 => $c->jornada->jornada,
+                3 => $c->capacidad,
+                4 => $c->total_estudiantes,
+                5 => $botones,
             ];
             $i++;
         }
@@ -172,7 +179,6 @@ class CursoController
 
     }
 
-
     public function eliminar(Request $request){
         $this->cors->corsJson();
         $cursoRequest = $request->input('curso');
@@ -205,12 +211,15 @@ class CursoController
 
         $id = intval($perRequest->id);
         $nombre_curso = ucfirst($perRequest->nombre_curso);
+        $jornada_id = intval($perRequest->jornada_id);
 
         $response = [];       
         $cur = Curso::find($id);
         if($perRequest){
             if($cur){
+                $cur->jornada_id = $jornada_id;
                 $cur->nombre_curso = $nombre_curso;
+                $cur->capacidad = $perRequest->capacidad;
                 $cur->save();  
 
                 $response = [
