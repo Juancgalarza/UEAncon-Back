@@ -48,6 +48,12 @@ class UsuarioAccion
                 }else 
                 if($ruta == '/usuario/eliminar'){
                     Route::post('/usuario/eliminar', 'usuarioController@eliminar');
+                }else
+                if ($ruta == '/usuario/saveEstudiante') {
+                    Route::post('/usuario/saveEstudiante', 'usuarioController@guardarEstudiante');
+                }else
+                if ($ruta == '/usuario/ficheroEstudiante') {
+                    Route::post('/usuario/ficheroEstudiante', 'usuarioController@subirFicheroEstudiante', true);
                 }else {
                     ErrorClass::e(404, "La ruta no existe");
                 }

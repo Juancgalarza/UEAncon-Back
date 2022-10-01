@@ -10,6 +10,7 @@ require_once 'models/personaModel.php';
 require_once 'controllers/personaController.php';
 require_once 'controllers/rolController.php';
 require_once 'models/sexoModel.php';
+require_once 'models/cursoModel.php';
 
 class UsuarioController
 {
@@ -390,5 +391,94 @@ class UsuarioController
         }
 
         echo json_encode($resp);
+    }
+
+    public function guardarEstudiante(Request $request)
+    {
+        $this->cors->corsJson();
+        $users = $request->input('usuario');
+        $est = $request->input('estudiante');
+        $response = [];
+
+        $curso_id = intval($est->curso_id);
+        $paralelo_id = intval($est->paralelo_id);
+
+        if (!isset($users) || $users == null) {
+            $response = [
+                'status' => false,
+                'mensaje' => 'No hay datos para procesar',
+                'usuario' => null,
+            ];
+        } else {
+            $resPersona = $this->personaController->guardarPersona($request);
+
+            $id_pers = $resPersona['persona']->id;
+
+            $clave = $users->clave;
+            $encriptar = hash('sha256', $clave);
+
+            $usuario = new Usuario;
+            $usuario->persona_id = $id_pers;
+            $usuario->rol_id = 2;
+            $usuario->usuario = $users->usuario;
+            $usuario->correo = $users->correo;
+            $usuario->img = $users->img;
+            $usuario->clave = $encriptar;
+            $usuario->conf_clave = $encriptar;
+            $usuario->estado = 'A';
+
+            //buscar en usuarios el id_persona si existe y validar
+            $exis_user = Usuario::where('persona_id', $id_pers)->get()->first();
+
+            if ($exis_user) {
+                $response = [
+                    'status' => false,
+                    'mensaje' => 'El estudiante ya se encuentra registrado',
+                    'estudiante' => null,
+                ];
+            } else {
+                if ($usuario->save()) {  
+                    //Crear un est y guardar
+                    $estudiante = new Estudiante;
+                    $estudiante->persona_id = $id_pers;
+                    $estudiante->curso_id = $curso_id;
+                    $estudiante->paralelo_id = $paralelo_id;
+                    $estudiante->estado = 'A';
+                    $acumEst = 0;
+                    $curso_dis = Curso::find($curso_id);
+                    $curso_dis->total_estudiantes += 1;
+                    $acumEst += $curso_dis->total_estudiantes;
+                    $curso_dis->save();
+                    $estudiante->save();
+                    
+                    $response = [
+                        'status' => true,
+                        'mensaje' => 'Se ha guardado el estudiante',
+                        'usuario' => $usuario,
+                        'estudiante' => $estudiante,
+                        'curso' => $curso_dis,
+                        'acumEst' => $acumEst
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'mensaje' => 'No se pudo guardar el estudiante',
+                        'estudiante' => null,
+                    ];
+                }
+            }
+        }
+
+        echo json_encode($response);
+    }
+
+    public function subirFicheroEstudiante($file)
+    {
+        $this->cors->corsJson();
+        $img = $file['fichero'];
+        $path = 'resources/estudiantes/';
+
+        $response = Helper::save_file($img, $path);
+        echo json_encode($response);
     }
 }
