@@ -41,13 +41,26 @@ class RolController
         echo json_encode($response);
     }
 
-    /* public function getRolId($cargo){
-        $rol = Rol::where('cargo',$cargo)->get()->first();
+    public function listarSinEstudiante()
+    {
+        $this->cors->corsJson();
 
-        if(isset($rol->id)){
-            return $rol->id;
-        }else{
-            return false;
+        $roles = Rol::where('id','<>',2)->where('estado', 'A')->orderBy('cargo')->get();
+        $response = [];
+
+        if ($roles) {
+            $response = [
+                'status' => true,
+                'mensaje' => 'Existen cargos',
+                'cargo' => $roles,
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'cargo' => null,
+                'mensaje' => 'No existen cargos',
+            ];
         }
-    } */
+        echo json_encode($response);
+    }
 }
