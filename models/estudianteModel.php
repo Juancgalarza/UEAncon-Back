@@ -5,7 +5,7 @@ require_once 'core/conexion.php';
 require_once 'models/personaModel.php';
 require_once 'models/cursoModel.php';
 require_once 'models/paraleloModel.php';
-require_once 'models/asignacionesModel.php';
+require_once 'models/calificacionesModel.php';
  
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,9 +30,9 @@ class Estudiante extends Model
     {
         return $this->belongsTo(Paralelo::class);
     }
-    public function asignaciones()
+    public function calificaciones()
     {
-        return $this->hasMany(Asignaciones::class);
+        return $this->hasMany(Calificaciones::class);
     }
 
 
