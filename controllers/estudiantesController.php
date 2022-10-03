@@ -26,7 +26,9 @@ class EstudiantesController
         $response = [];
 
         if ($estudiante) {
-            $estudiante->persona;
+            $estudiante->persona->sexo;
+            $estudiante->curso;
+            $estudiante->paralelo;
             $response = [
                 'status' => true,
                 'estudiante' => $estudiante,
@@ -65,9 +67,12 @@ class EstudiantesController
                 1 => $est->persona->cedula,
                 2 => $est->persona->nombres,
                 3 => $est->persona->apellidos,
-                4 => $est->curso->nombre_curso,
-                5 => $est->paralelo->tipo,
-                6 => $botones,
+                4 => $est->persona->celular,
+                5 => $est->persona->direccion,
+                6 => $est->persona->sexo->sexo,
+                7 => $est->curso->nombre_curso,
+                8 => $est->paralelo->tipo,
+                9 => $botones,
             ];
             $i++;
         }
@@ -83,38 +88,40 @@ class EstudiantesController
 
     public function editar(Request $request)
     {
-
         $this->cors->corsJson();
-        $usuRequest = $request->input('usuario');
+        $estRequest = $request->input('estudiante');
 
-        $id = intval($usuRequest->id);
-        $persona_id = intval($usuRequest->persona_id);
-        $rol_id = intval($usuRequest->rol_id);
-        $usuario = ucfirst($usuRequest->usuario);
+        $id = intval($estRequest->id);
+        $persona_id = intval($estRequest->persona_id);
+        $curso_id = intval($estRequest->curso_id);
+        $paralelo_id = intval($estRequest->paralelo_id);
 
         $response = [];
-        $usu = Usuario::find($id);
-        if ($usuRequest) {
-            if ($usu) {
-                $usu->persona_id = $persona_id;
-                $usu->rol_id = $rol_id;
-                $usu->usuario = $usuario;
+        $est = Estudiante::find($id);
+        if ($estRequest) {
+            if ($est) {
+                $est->persona_id = $persona_id;
+                $est->curso_id = $curso_id;
+                $est->paralelo_id = $paralelo_id;
 
-                $persona = Persona::find($usu->persona_id);
-                $persona->nombres = ucfirst($usuRequest->nombres);
-                $persona->apellidos = ucfirst($usuRequest->apellidos);
+                $persona = Persona::find($est->persona_id);
+                $persona->sexo_id = intval($estRequest->sexo_id);
+                $persona->nombres = ucfirst($estRequest->nombres);
+                $persona->apellidos = ucfirst($estRequest->apellidos);
+                $persona->celular = $estRequest->celular;
+                $persona->direccion = ucfirst($estRequest->direccion);
                 $persona->save();
-                $usu->save();
+                $est->save();
 
                 $response = [
                     'status' => true,
-                    'mensaje' => 'El Usuario se ha actualizado',
-                    'data' => $usu,
+                    'mensaje' => 'El Estudiante se ha actualizado',
+                    'estudiante' => $est,
                 ];
             } else {
                 $response = [
                     'status' => false,
-                    'mensaje' => 'No se puede actualizar el usuario',
+                    'mensaje' => 'No se puede actualizar el Estudiante',
                 ];
             }
         } else {
@@ -129,24 +136,28 @@ class EstudiantesController
     public function eliminar(Request $request)
     {
         $this->cors->corsJson();
-        $usuarioRequest = $request->input('usuario');
-        $id = intval($usuarioRequest->id);
+        $estudianteRequest = $request->input('estudiante');
+        $id = intval($estudianteRequest->id);
 
-        $usuario = Usuario::find($id);
+        $est = Estudiante::find($id);
         $response = [];
 
-        if ($usuario) {
-            $usuario->estado = 'I';
-            $usuario->save();
+        if ($est) {
+            $est->estado = 'I';
+
+            $persona = Persona::find($est->persona_id);
+            $persona->estado = 'I';
+            $persona->save();
+            $est->save();
 
             $response = [
                 'status' => true,
-                'mensaje' => 'Se ha eliminado el usuario',
+                'mensaje' => 'Se ha eliminado el Estudiante',
             ];
         } else {
             $response = [
                 'status' => false,
-                'mensaje' => 'No se ha podido eliminar el usuario',
+                'mensaje' => 'No se ha podido eliminar el Estudiante',
             ];
         }
         echo json_encode($response);
@@ -162,19 +173,21 @@ class EstudiantesController
         $i = 1;
 
         foreach ($estudiante as $est) {
+            $us = Usuario::find($est->persona_id);
+            $url = BASE . 'resources/usuarios/' . $us->img;
             $botones = '<div class="btn-group">
                     <button class="btn btn-primary btn-sm" onclick="calificarEstudiante(' . $est->id . ')">
-                        <i class="fa fa-pencil-square fa-lg"></i>
+                        <i class="fa fa-pencil-square fa-lg"></i>Calificar
                     </button>
                 </div>';
 
             $data[] = [
                 0 => $i,
-                1 => $est->persona->cedula,
-                2 => $est->persona->nombres,
-                3 => $est->persona->apellidos,
-                4 => $est->curso->nombre_curso,
-                5 => $est->paralelo->tipo,
+                1 => '<div class="box-img-usuario"><img src=' . "$url" . '></div>',
+                2 => $est->persona->cedula,
+                3 => $est->persona->nombres.' '.$est->persona->apellidos,
+                4 => $est->persona->celular,
+                5 => $est->persona->direccion,
                 6 => $botones,
             ];
             $i++;
