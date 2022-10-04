@@ -8,8 +8,12 @@ class Detalle_CalificacionesAccion
         switch ($metodo_http) {
             case 'get':
                 if ($ruta == '/detalle_calificaciones/reportexParcial' && $params) {
-                    Route::get('/detalle_calificaciones/reportexParcial/:parcial_id/:estudiante_id', 'detalle_calificacionesController@reportexParcial',$params);
-                }else {
+                    Route::get('/detalle_calificaciones/reportexParcial/:parcial_id/:quimestre_id/:estudiante_id', 'detalle_calificacionesController@reportexParcial',$params);
+                }else
+                if ($ruta == '/detalle_calificaciones/reporteQuimestral' && $params) {
+                    Route::get('/detalle_calificaciones/reporteQuimestral/:quimestre_id/:estudiante_id', 'detalle_calificacionesController@reporteQuimestral',$params);
+                }
+                else {
                     ErrorClass::e(404, "La ruta no existe");
                 }
             break;

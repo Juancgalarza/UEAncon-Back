@@ -8,9 +8,7 @@ require_once 'models/materiaModel.php';
 
 class Curso_MateriaController
 {
-
     private $cors;
-
 
     public function __construct()
     {

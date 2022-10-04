@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-10-2022 a las 11:36:33
+-- Tiempo de generación: 04-10-2022 a las 07:06:00
 -- Versión del servidor: 10.4.17-MariaDB
 -- Versión de PHP: 8.0.0
 
@@ -42,13 +42,24 @@ CREATE TABLE `calificaciones` (
 --
 
 INSERT INTO `calificaciones` (`id`, `docente_id`, `materia_id`, `curso_id`, `paralelo_id`, `promedio_total`, `estado`) VALUES
-(1, 4, 1, 1, 1, 9.1, 'A'),
-(2, 4, 1, 1, 1, 8.83, 'A'),
-(3, 4, 1, 1, 1, 9.08, 'A'),
-(4, 4, 2, 1, 1, 8.42, 'A'),
-(5, 4, 2, 1, 1, 8, 'A'),
-(6, 4, 2, 1, 1, 8.58, 'A'),
-(7, 4, 3, 1, 1, 9.02, 'A');
+(1, 4, 1, 1, 1, 9.17, 'A'),
+(2, 4, 1, 1, 1, 9.1, 'A'),
+(3, 4, 1, 1, 1, 8.83, 'A'),
+(4, 4, 1, 1, 1, 8.33, 'A'),
+(5, 4, 1, 1, 1, 9.17, 'A'),
+(6, 4, 1, 1, 1, 8.08, 'A'),
+(7, 4, 2, 1, 1, 7.83, 'A'),
+(8, 4, 2, 1, 1, 8.43, 'A'),
+(9, 4, 2, 1, 1, 8.54, 'A'),
+(10, 4, 2, 1, 1, 7.98, 'A'),
+(11, 4, 2, 1, 1, 8.71, 'A'),
+(12, 4, 2, 1, 1, 9, 'A'),
+(13, 4, 3, 1, 1, 9.1, 'A'),
+(14, 4, 3, 1, 1, 8, 'A'),
+(15, 4, 3, 1, 1, 9.46, 'A'),
+(16, 4, 3, 1, 1, 8.93, 'A'),
+(17, 4, 3, 1, 1, 8.58, 'A'),
+(18, 4, 3, 1, 1, 8.46, 'A');
 
 -- --------------------------------------------------------
 
@@ -112,6 +123,7 @@ CREATE TABLE `detalle_calificaciones` (
   `id` int(11) NOT NULL,
   `calificaciones_id` int(11) DEFAULT NULL,
   `parcial_id` int(11) DEFAULT NULL,
+  `quimestre_id` int(11) DEFAULT NULL,
   `estudiante_id` int(11) DEFAULT NULL,
   `nota1` double DEFAULT NULL,
   `nota2` double DEFAULT NULL,
@@ -128,14 +140,25 @@ CREATE TABLE `detalle_calificaciones` (
 -- Volcado de datos para la tabla `detalle_calificaciones`
 --
 
-INSERT INTO `detalle_calificaciones` (`id`, `calificaciones_id`, `parcial_id`, `estudiante_id`, `nota1`, `nota2`, `nota3`, `nota4`, `nota5`, `nota6`, `total`, `promedio`, `examen`) VALUES
-(1, 1, 1, 2, 9.6, 9, 8.5, 8, 10, 9.5, 54.6, 9.1, 8),
-(2, 2, 2, 2, 9, 9, 8.5, 8.5, 9, 9, 53, 8.83, 9),
-(3, 3, 1, 3, 8, 9, 9, 9.5, 10, 9, 54.5, 9.08, 9),
-(4, 4, 1, 2, 9, 8.5, 9, 8, 7, 9, 50.5, 8.42, 9),
-(5, 5, 3, 3, 8, 8, 8, 8, 8, 8, 48, 8, 8),
-(6, 6, 1, 3, 10, 9, 8, 7.5, 8, 9, 51.5, 8.58, 10),
-(7, 7, 1, 2, 9, 9, 9.5, 8.6, 10, 8, 54.1, 9.02, 8);
+INSERT INTO `detalle_calificaciones` (`id`, `calificaciones_id`, `parcial_id`, `quimestre_id`, `estudiante_id`, `nota1`, `nota2`, `nota3`, `nota4`, `nota5`, `nota6`, `total`, `promedio`, `examen`) VALUES
+(1, 1, 1, 1, 2, 9.5, 9, 9.5, 8, 10, 9, 55, 9.17, 8.5),
+(2, 2, 2, 1, 2, 9, 9, 8, 8.6, 10, 10, 54.6, 9.1, 9),
+(3, 3, 3, 1, 2, 9.5, 9.5, 9.5, 8.5, 8, 8, 53, 8.83, 8),
+(4, 4, 1, 2, 2, 8.5, 7.5, 8, 8, 9, 9, 50, 8.33, 9),
+(5, 5, 2, 2, 2, 9, 9, 9.5, 8.5, 10, 9, 55, 9.17, 9),
+(6, 6, 3, 2, 2, 9.5, 9, 7, 7, 8, 8, 48.5, 8.08, 8),
+(7, 7, 1, 1, 2, 8, 8, 7.5, 7.5, 8, 8, 47, 7.83, 9.5),
+(8, 8, 2, 1, 2, 8.5, 8.5, 8, 8, 9, 8.6, 50.6, 8.43, 8.25),
+(9, 9, 3, 1, 2, 8.5, 8.5, 9, 7.25, 9, 9, 51.25, 8.54, 9),
+(10, 10, 1, 2, 2, 7, 7.25, 8, 8, 9, 8.6, 47.85, 7.98, 8),
+(11, 11, 2, 2, 2, 8, 8, 8.25, 9, 9, 10, 52.25, 8.71, 10),
+(12, 12, 3, 2, 2, 9, 9, 9, 9, 9, 9, 54, 9, 9),
+(13, 13, 1, 1, 2, 8, 9, 9, 9.6, 10, 9, 54.6, 9.1, 9),
+(14, 14, 2, 1, 2, 8, 8, 8, 8, 8, 8, 48, 8, 8),
+(15, 15, 3, 1, 2, 9, 9.25, 9.5, 9, 10, 10, 56.75, 9.46, 10),
+(16, 16, 1, 2, 2, 9, 8.6, 9, 9, 9, 9, 53.6, 8.93, 9.25),
+(17, 17, 2, 2, 2, 8.25, 8.25, 8.5, 8.5, 9, 9, 51.5, 8.58, 9),
+(18, 18, 3, 2, 2, 8, 8, 8, 8.25, 9, 9.5, 50.75, 8.46, 9);
 
 -- --------------------------------------------------------
 
@@ -290,7 +313,8 @@ INSERT INTO `menus` (`id`, `id_seccion`, `menu`, `icono`, `url`, `posicion`, `es
 (15, 14, 'Reporte Por Estudiante', '#', 'reportes/estudiante', 1, 'A'),
 (16, 14, 'Reporte Por Parcial', '#', 'reportes/parcial', 2, 'A'),
 (17, 0, 'Calificaciones', 'fa fa-list', 'calificaciones', 0, 'A'),
-(18, 17, 'Control Calificaciones', '#', 'calificaciones/control', 1, 'A');
+(18, 17, 'Control Calificaciones', '#', 'calificaciones/control', 1, 'A'),
+(19, 14, 'Reporte Quimestral', '#', 'reportes/quimestral', 3, 'A');
 
 -- --------------------------------------------------------
 
@@ -330,9 +354,9 @@ CREATE TABLE `parcial` (
 --
 
 INSERT INTO `parcial` (`id`, `parcial`, `estado`) VALUES
-(1, 'Parcial 1', 'A'),
-(2, 'Parcial 2', 'A'),
-(3, 'Parcial 3', 'A');
+(1, 'Primer Parcial', 'A'),
+(2, 'Segundo Parcial', 'A'),
+(3, 'Tercer Parcial', 'A');
 
 -- --------------------------------------------------------
 
@@ -392,7 +416,8 @@ INSERT INTO `permisos` (`id`, `rol_id`, `menu_id`, `acceso`, `estado`) VALUES
 (18, 2, 14, 'S', 'A'),
 (19, 2, 16, 'S', 'A'),
 (20, 3, 17, 'S', 'A'),
-(21, 3, 18, 'S', 'A');
+(21, 3, 18, 'S', 'A'),
+(22, 2, 19, 'S', 'A');
 
 -- --------------------------------------------------------
 
@@ -425,6 +450,26 @@ INSERT INTO `persona` (`id`, `sexo_id`, `cedula`, `nombres`, `apellidos`, `celul
 (29, 2, '2450795261', 'Daniela', 'Cruz', '0987651255', 'La libertad', 'A'),
 (30, 1, '2450024969', 'Mario', 'Fernandez', '0985615151', 'Muey', 'A'),
 (31, 1, '2450876111', 'Bruno', 'Perez', '0985478959', 'Santa elena', 'A');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `quimestre`
+--
+
+CREATE TABLE `quimestre` (
+  `id` int(11) NOT NULL,
+  `quimestre` varchar(50) DEFAULT NULL,
+  `estado` char(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `quimestre`
+--
+
+INSERT INTO `quimestre` (`id`, `quimestre`, `estado`) VALUES
+(1, 'Primer Quimestre', 'A'),
+(2, 'Segundo Quimestre', 'A');
 
 -- --------------------------------------------------------
 
@@ -536,7 +581,8 @@ ALTER TABLE `detalle_calificaciones`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_detcal_cal` (`calificaciones_id`),
   ADD KEY `fk_detcal_parcial` (`parcial_id`),
-  ADD KEY `fk_detcal_est` (`estudiante_id`);
+  ADD KEY `fk_detcal_est` (`estudiante_id`),
+  ADD KEY `fk_detcal_quimestre` (`quimestre_id`);
 
 --
 -- Indices de la tabla `docente`
@@ -617,6 +663,12 @@ ALTER TABLE `persona`
   ADD KEY `fk_per_sexo` (`sexo_id`);
 
 --
+-- Indices de la tabla `quimestre`
+--
+ALTER TABLE `quimestre`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `roles`
 --
 ALTER TABLE `roles`
@@ -644,7 +696,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `calificaciones`
 --
 ALTER TABLE `calificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `curso`
@@ -662,7 +714,7 @@ ALTER TABLE `curso_materia`
 -- AUTO_INCREMENT de la tabla `detalle_calificaciones`
 --
 ALTER TABLE `detalle_calificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `docente`
@@ -698,7 +750,7 @@ ALTER TABLE `materia`
 -- AUTO_INCREMENT de la tabla `menus`
 --
 ALTER TABLE `menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `paralelo`
@@ -722,13 +774,19 @@ ALTER TABLE `periodo`
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+
+--
+-- AUTO_INCREMENT de la tabla `quimestre`
+--
+ALTER TABLE `quimestre`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
@@ -780,7 +838,8 @@ ALTER TABLE `curso_materia`
 ALTER TABLE `detalle_calificaciones`
   ADD CONSTRAINT `fk_detcal_cal` FOREIGN KEY (`calificaciones_id`) REFERENCES `calificaciones` (`id`),
   ADD CONSTRAINT `fk_detcal_est` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiante` (`id`),
-  ADD CONSTRAINT `fk_detcal_parcial` FOREIGN KEY (`parcial_id`) REFERENCES `parcial` (`id`);
+  ADD CONSTRAINT `fk_detcal_parcial` FOREIGN KEY (`parcial_id`) REFERENCES `parcial` (`id`),
+  ADD CONSTRAINT `fk_detcal_quimestre` FOREIGN KEY (`quimestre_id`) REFERENCES `quimestre` (`id`);
 
 --
 -- Filtros para la tabla `docente`

@@ -4,18 +4,13 @@ require_once 'app/cors.php';
 require_once 'app/request.php';
 require_once 'models/rolModel.php';
 
-
-
 class RolController
 {
-
     private $cors;
   
-
     public function __construct()
     {
         $this->cors = new Cors();
-       
     }
 
     public function listar()

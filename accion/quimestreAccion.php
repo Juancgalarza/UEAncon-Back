@@ -2,7 +2,7 @@
 
 require_once 'app/error.php';
 
-class RolAccion
+class QuimestreAccion
 {
 
     public function index($metodo_http, $ruta, $params = null)
@@ -10,11 +10,8 @@ class RolAccion
 
         switch ($metodo_http) {
             case 'get':
-                if ($ruta == '/rol/listar') {
-                    Route::get('/rol/listar', 'rolController@listar');
-                }else
-                if ($ruta == '/rol/listarSinEstudiante') {
-                    Route::get('/rol/listarSinEstudiante', 'rolController@listarSinEstudiante');
+                if ($ruta == '/quimestre/listar') {
+                    Route::get('/quimestre/listar', 'quimestreController@listar');
                 }else {
                     ErrorClass::e(404, "La ruta no existe");
                 }
