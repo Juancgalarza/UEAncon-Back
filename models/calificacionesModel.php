@@ -7,13 +7,16 @@ require_once 'models/materiaModel.php';
 require_once 'models/cursoModel.php';
 require_once 'models/paraleloModel.php';
 require_once 'models/detalle_calificacionesModel.php';
+require_once 'models/parcialModel.php';
+require_once 'models/quimestreModel.php';
+require_once 'models/estudianteModel.php';
 
 use Illuminate\Database\Eloquent\Model;
 
 class Calificaciones extends Model
 {
     protected $table = "calificaciones";
-    protected $fillable = ['docente_id','materia_id','curso_id','paralelo_id','promedio_total','estado'];
+    protected $fillable = ['estudiante_id','docente_id','materia_id','curso_id','paralelo_id','parcial_id','quimestre_id','promedio_parcial','estado'];
     public $timestamps = false;
 
     public function docente()
@@ -41,5 +44,19 @@ class Calificaciones extends Model
         return $this->hasMany(Detalle_Calificaciones::class);
     }
 
+    public function estudiante()
+    {
+        return $this->belongsTo(Estudiante::class);
+    }
+
+    public function parcial()
+    {
+        return $this->belongsTo(Parcial::class);
+    }
+
+    public function quimestre()
+    {
+        return $this->belongsTo(Quimestre::class);
+    }
 
 } 

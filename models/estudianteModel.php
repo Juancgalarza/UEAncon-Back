@@ -6,6 +6,7 @@ require_once 'models/personaModel.php';
 require_once 'models/cursoModel.php';
 require_once 'models/paraleloModel.php';
 require_once 'models/calificacionesModel.php';
+require_once 'models/examenModel.php';
  
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,14 +31,16 @@ class Estudiante extends Model
     {
         return $this->belongsTo(Paralelo::class);
     }
+
     public function calificaciones()
     {
         return $this->hasMany(Calificaciones::class);
     }
 
+    public function examen()
+    {
+        return $this->hasMany(Examen::class);
+    }
 
-
-
-    
 } 
  

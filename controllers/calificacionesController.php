@@ -29,24 +29,35 @@ class CalificacionesController
         $response = [];
 
         if ($calificacionrequest) {
+            $calificacionrequest->estudiante_id = intval($calificacionrequest->estudiante_id);
             $calificacionrequest->docente_id = intval($calificacionrequest->docente_id);
             $calificacionrequest->materia_id = intval($calificacionrequest->materia_id);
             $calificacionrequest->curso_id = intval($calificacionrequest->curso_id);
             $calificacionrequest->paralelo_id = intval($calificacionrequest->paralelo_id);
-            $calificacionrequest->promedio_total = doubleval($calificacionrequest->promedio_total);
+            $calificacionrequest->parcial_id = intval($calificacionrequest->parcial_id);
+            $calificacionrequest->quimestre_id = intval($calificacionrequest->quimestre_id);
+            $calificacionrequest->promedio_parcial = doubleval($calificacionrequest->promedio_parcial);
 
             $nuevaCalificacion = new Calificaciones();
+            $nuevaCalificacion->estudiante_id = $calificacionrequest->estudiante_id;
             $nuevaCalificacion->docente_id = $calificacionrequest->docente_id;
             $nuevaCalificacion->materia_id = $calificacionrequest->materia_id;
             $nuevaCalificacion->curso_id = $calificacionrequest->curso_id;
             $nuevaCalificacion->paralelo_id = $calificacionrequest->paralelo_id;
-            $nuevaCalificacion->promedio_total = $calificacionrequest->promedio_total;
+            $nuevaCalificacion->parcial_id = $calificacionrequest->parcial_id;
+            $nuevaCalificacion->quimestre_id = $calificacionrequest->quimestre_id;
+            $nuevaCalificacion->promedio_parcial = $calificacionrequest->promedio_parcial;
             $nuevaCalificacion->estado = 'A';
 
-            //echo json_encode($detallecalificacion[0]->parcial_id); die();
-            //$exis_parcial = Detalle_Calificaciones::where('parcial_id', $detallecalificacion[0]->parcial_id)->get()->first();
-            //$exis_estudiante = Calificaciones::where('estudiante_id', $calificacionrequest->estudiante_id)->where('materia_id', $calificacionrequest->materia_id)->get()->first();
-            /* if ($exis_parcial && $exis_estudiante) {
+            $exis_registro = Calificaciones::where('estudiante_id', $calificacionrequest->estudiante_id)
+                ->where('docente_id', $calificacionrequest->docente_id)
+                ->where('materia_id', $calificacionrequest->materia_id)
+                ->where('curso_id', $calificacionrequest->curso_id)
+                ->where('paralelo_id', $calificacionrequest->paralelo_id)
+                ->where('parcial_id', $calificacionrequest->parcial_id)
+                ->where('quimestre_id', $calificacionrequest->quimestre_id)
+                ->get()->first();
+            if ($exis_registro) {
                 $response = [
                     'status' => false,
                     'mensaje' => 'Ya se asignaron calificaciones al Parcial Seleccionado',
@@ -54,25 +65,25 @@ class CalificacionesController
                     'detalle' => null,
                 ];
             } else {
-            } */
-            if ($nuevaCalificacion->save()) {
+                if ($nuevaCalificacion->save()) {
 
-                $detalleController = new Detalle_CalificacionesController();
-                $extra = $detalleController->guardar($nuevaCalificacion->id, $detallecalificacion);
+                    $detalleController = new Detalle_CalificacionesController();
+                    $extra = $detalleController->guardar($nuevaCalificacion->id, $detallecalificacion);
 
-                $response = [
-                    'status' => true,
-                    'mensaje' => 'Las Calificaciones se asignaron correctamente',
-                    'calificacion' => $nuevaCalificacion,
-                    'detalle' => $extra,
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'mensaje' => 'Las Calificaciones no se puede guardar',
-                    'calificacion' => null,
-                    'detalle' => null,
-                ];
+                    $response = [
+                        'status' => true,
+                        'mensaje' => 'Las Calificaciones se asignaron correctamente',
+                        'calificacion' => $nuevaCalificacion,
+                        'detalle' => $extra,
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'mensaje' => 'Las Calificaciones no se puede guardar',
+                        'calificacion' => null,
+                        'detalle' => null,
+                    ];
+                }
             }
         } else {
             $response = [
@@ -85,29 +96,24 @@ class CalificacionesController
         echo json_encode($response);
     }
 
-
-    /* public function reportexParcial($params)
+    public function reportexParcial($params)
     {
         $this->cors->corsJson();
+        $parcial_id = intval($params['parcial_id']);
+        $quimestre_id = intval($params['quimestre_id']);
         $estudiante_id = intval($params['estudiante_id']);
-        $data = Asignaciones::where('estudiante_id', $estudiante_id)->where('estado', 'A')->get();
+        $data = Calificaciones::where('parcial_id', $parcial_id)->where('quimestre_id', $quimestre_id)->where('estudiante_id', $estudiante_id)->get();
         $response = [];
         $nuevoarray = [];
 
         if (count($data) > 0) {
             foreach ($data as $d) {
-                $d->materia->nombre_materia;
-                $d->curso->nombre_curso;
-                $d->paralelo->tipo;
-                $d->detalle_asignaciones;
-                $materia = $d->materia->nombre_materia;
-
-                foreach ($d->detalle_asignaciones as $det) {
-                    $det->parcial;
-                    $det->quimestre;
-                    $det->tipo_actividades;
-                }
+                $d->parcial;
+                $d->estudiante->persona;
+                $d->materia;
+                $d->detalle_calificaciones;
             }
+
             $response = [
                 'status' => true,
                 'mensaje' => 'Existen datos',
@@ -123,7 +129,7 @@ class CalificacionesController
             ];
         }
         echo json_encode($response);
-    } */
+    }
 
     public function desgloseCalificacion($params)
     {
@@ -136,14 +142,14 @@ class CalificacionesController
             $nuevoArray = [];
             foreach ($data as $d) {
                 foreach ($d->detalle_calificaciones as $det) {
-                    $parcial = $det->parcial;
                 }
                 $aux = [
                     'estudiante_id' => $d->estudiante_id,
                     'materia' => $d->materia->nombre_materia,
                     'curso' => $d->curso->nombre_curso,
+                    'parcial' => $d->parcial->parcial,
                     'paralelo' =>  $d->paralelo->tipo,
-                    'estudiante' => $det->estudiante->persona,
+                    'estudiante' => $d->estudiante->persona,
                     'detalle' => $det,
                 ];
                 $nuevoArray[] = (object)$aux;
@@ -164,4 +170,213 @@ class CalificacionesController
         echo json_encode($response);
     }
 
+    public function reporteQuimestral($params)
+    {
+        $this->cors->corsJson();
+        $quimestre_id = intval($params['quimestre_id']);
+        $estudiante_id = intval($params['estudiante_id']);
+        $response = [];
+        $materia = [];
+        $data = [];
+        $newdata = [];
+
+        $dataMateria = Materia::where('estado', 'A')->get();
+
+        if (count($dataMateria) > 0) {
+            foreach ($dataMateria as $key) {
+
+                $calificacion = Calificaciones::where('materia_id', $key->id)->where('quimestre_id', $quimestre_id)->where('estudiante_id', $estudiante_id)->get();
+
+                if (count($calificacion) > 0) {
+                    $aux = [
+                        'cantidad' => count($calificacion),
+                        'materia' => $key->nombre_materia,
+                        'calificaciones' => $calificacion,
+                        'examen' => $key->examen
+                    ];
+                    $data[] = $aux;
+                }
+            }
+        } else {
+            $aux = [
+                'mensaje' => 'No hay datos para procesar',
+                'calificaciones' => []
+            ];
+            $data[] = $aux;
+        }
+
+
+        echo json_encode($data);
+    }
+
+    public function reporteAnual($params)
+    {
+
+        $this->cors->corsJson();
+        $estudiante_id = intval($params['estudiante_id']);
+        $response = [];
+        $materia = [];
+        $data = [];
+        $newdata = [];
+
+        $dataMateria = Materia::where('estado', 'A')->get();
+
+        if (count($dataMateria) > 0) {
+            foreach ($dataMateria as $key) {
+
+                $calificacion = Calificaciones::where('materia_id', $key->id)->where('estudiante_id', $estudiante_id)->get();
+
+                if (count($calificacion) > 0) {
+                    $aux = [
+                        'cantidad' => count($calificacion),
+                        'materia' => $key->nombre_materia,
+                        'calificaciones' => $calificacion,
+                        'examen' => $key->examen
+                    ];
+                    $data[] = $aux;
+                }
+            }
+        } else {
+            $aux = [
+                'mensaje' => 'No hay datos para procesar',
+                'calificaciones' => []
+            ];
+            $data[] = $aux;
+        }
+
+
+        echo json_encode($data);
+    }
+
+    public function reportexParcialDocente($params)
+    {
+        $this->cors->corsJson();
+        $parcial_id = intval($params['parcial_id']);
+        $quimestre_id = intval($params['quimestre_id']);
+        $materia_id = intval($params['materia_id']);
+        $curso_id = intval($params['curso_id']);
+        $paralelo_id = intval($params['paralelo_id']);
+        $data = Calificaciones::where('parcial_id', $parcial_id)
+        ->where('quimestre_id', $quimestre_id)
+        ->where('materia_id', $materia_id)
+        ->where('curso_id', $curso_id)
+        ->where('paralelo_id', $paralelo_id)
+        ->get();
+        $response = [];
+        $nuevoarray = [];
+
+        if (count($data) > 0) {
+            foreach ($data as $d) {
+                $d->parcial;
+                $d->estudiante->persona;
+                $d->materia;
+                $d->detalle_calificaciones;
+            }
+
+            $response = [
+                'status' => true,
+                'mensaje' => 'Existen datos',
+                'data' => [
+                    'tabla' => $data,
+                ],
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'mensaje' => 'No se encuentra la data',
+                'data' => null,
+            ];
+        }
+        echo json_encode($response);
+    }
+
+    public function reporteQuimestralDocente($params)
+    {
+        $this->cors->corsJson();
+        $quimestre_id = intval($params['quimestre_id']);
+        $materia_id = intval($params['materia_id']);
+        $curso_id = intval($params['curso_id']);
+        $paralelo_id = intval($params['paralelo_id']);
+        $response = [];
+        $materia = [];
+        $data = [];
+        $newdata = [];
+
+        $dataEstudiante = Estudiante::where('estado', 'A')->get();
+
+        if (count($dataEstudiante) > 0) {
+            foreach ($dataEstudiante as $key) {
+
+                $calificacion = Calificaciones::where('estudiante_id',$key->id)
+                ->where('materia_id', $materia_id)
+                ->where('quimestre_id', $quimestre_id)
+                ->where('curso_id', $curso_id)
+                ->where('paralelo_id', $paralelo_id)
+                ->get();
+
+                if (count($calificacion) > 0) {
+                    $examen = Examen::where('materia_id', $materia_id)->where('quimestre_id', $quimestre_id)->get();
+                    $aux = [
+                        'cantidad' => count($calificacion),
+                        'estudiante' => $key->persona,
+                        'calificaciones' => $calificacion,
+                        'examen' => $examen
+                    ];
+                    $data[] = $aux;
+                }
+            }
+        } else {
+            $aux = [
+                'mensaje' => 'No hay datos para procesar',
+                'calificaciones' => []
+            ];
+            $data[] = $aux;
+        }
+
+        echo json_encode($data);
+    }
+
+    public function reporteAnualDocente($params)
+    {
+        $this->cors->corsJson();
+        $materia_id = intval($params['materia_id']);
+        $curso_id = intval($params['curso_id']);
+        $paralelo_id = intval($params['paralelo_id']);
+        $response = [];
+        $materia = [];
+        $data = [];
+        $newdata = [];
+
+        $dataEstudiante = Estudiante::where('estado', 'A')->get();
+
+        if (count($dataEstudiante) > 0) {
+            foreach ($dataEstudiante as $key) {
+
+                $calificacion = Calificaciones::where('estudiante_id',$key->id)
+                ->where('materia_id', $materia_id)
+                ->where('curso_id', $curso_id)
+                ->where('paralelo_id', $paralelo_id)
+                ->get();
+
+                if (count($calificacion) > 0) {
+                    $examen = Examen::where('materia_id', $materia_id)->get();
+                    $aux = [
+                        'cantidad' => count($calificacion),
+                        'estudiante' => $key->persona,
+                        'calificaciones' => $calificacion,
+                        'examen' => $examen
+                    ];
+                    $data[] = $aux;
+                }
+            }
+        } else {
+            $aux = [
+                'mensaje' => 'No hay datos para procesar',
+                'calificaciones' => []
+            ];
+            $data[] = $aux;
+        }
+
+        echo json_encode($data);
+    }
 }

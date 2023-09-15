@@ -11,7 +11,7 @@ class Detalle_CalificacionesAccion
                     Route::get('/detalle_calificaciones/reportexParcial/:parcial_id/:quimestre_id/:estudiante_id', 'detalle_calificacionesController@reportexParcial',$params);
                 }else
                 if ($ruta == '/detalle_calificaciones/reporteQuimestral' && $params) {
-                    Route::get('/detalle_calificaciones/reporteQuimestral/:quimestre_id/:estudiante_id', 'detalle_calificacionesController@reporteQuimestral',$params);
+                    Route::get('/detalle_calificaciones/reporteQuimestral/:quimestre_id/:estudiante_id', 'detalle_calificacionesController@reporteQuimestral4',$params);
                 }
                 else {
                     ErrorClass::e(404, "La ruta no existe");

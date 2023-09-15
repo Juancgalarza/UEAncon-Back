@@ -78,6 +78,8 @@ class ParaleloController
             } else {
                 $nuevoParalelo = new Paralelo();
                 $nuevoParalelo->tipo = ucfirst($paraleloRequest->tipo);
+                $nuevoParalelo->capacidad = intval($paraleloRequest->capacidad);
+                $nuevoParalelo->total_estudiantes = 0;
                 $nuevoParalelo->estado = 'A';
 
                 if ($nuevoParalelo->save()) {
@@ -125,7 +127,9 @@ class ParaleloController
             $data[] = [
                 0 => $i,
                 1 => $p->tipo,
-                2 => $botones,
+                2 => $p->capacidad,
+                3 => $p->total_estudiantes,
+                4 => $botones,
             ];
             $i++;
         }
@@ -177,6 +181,7 @@ class ParaleloController
         if($perRequest){
             if($par){
                 $par->tipo = $tipo;
+                $par->capacidad = $perRequest->capacidad;
                 $par->save();  
 
                 $response = [

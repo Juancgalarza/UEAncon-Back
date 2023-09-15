@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Periodo extends Model
 {
     protected $table = "periodo";
-    protected $fillable = ['periodo','estado'];
+    protected $fillable = ['periodo','estado_periodo_id','estado'];
     public $timestamps = false;
 
     public function docente_materia()

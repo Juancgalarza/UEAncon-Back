@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Paralelo extends Model
 {
     protected $table = "paralelo";
-    protected $fillable = ['tipo','estado'];
+    protected $fillable = ['tipo','capacidad','total_estudiantes','estado'];
     public $timestamps = false;
 
     public function docente_materia()

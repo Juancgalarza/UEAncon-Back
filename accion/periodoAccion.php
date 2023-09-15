@@ -15,8 +15,14 @@ class PeriodoAccion
                 if ($ruta == '/periodo/listar') {
                     Route::get('/periodo/listar', 'periodoController@listar');
                 }else
+                if ($ruta == '/periodo/listarActivos') {
+                    Route::get('/periodo/listarActivos', 'periodoController@listarActivos');
+                }else
                 if ($ruta == '/periodo/datatable') {
                     Route::get('/periodo/datatable', 'periodoController@dataTable');
+                }else 
+                if($ruta == '/periodo/cambioActivo' && $params){
+                    Route::get('/periodo/cambioActivo/:id/:estado_periodo_id', 'periodoController@cambioActivo',$params);
                 }else {
                     ErrorClass::e(404, "La ruta no existe");
                 }

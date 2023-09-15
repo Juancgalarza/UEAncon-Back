@@ -80,8 +80,6 @@ class CursoController
                 $nuevoCurso = new Curso();
                 $nuevoCurso->jornada_id = intval($cursoRequest->jornada_id);
                 $nuevoCurso->nombre_curso = ucfirst($cursoRequest->nombre_curso);
-                $nuevoCurso->capacidad = intval($cursoRequest->capacidad);
-                $nuevoCurso->total_estudiantes = 0;
                 $nuevoCurso->estado = 'A';
 
                 if ($nuevoCurso->save()) {
@@ -130,9 +128,7 @@ class CursoController
                 0 => $i,
                 1 => $c->nombre_curso,
                 2 => $c->jornada->jornada,
-                3 => $c->capacidad,
-                4 => $c->total_estudiantes,
-                5 => $botones,
+                3 => $botones,
             ];
             $i++;
         }
@@ -219,7 +215,6 @@ class CursoController
             if($cur){
                 $cur->jornada_id = $jornada_id;
                 $cur->nombre_curso = $nombre_curso;
-                $cur->capacidad = $perRequest->capacidad;
                 $cur->save();  
 
                 $response = [

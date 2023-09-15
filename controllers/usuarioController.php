@@ -11,6 +11,7 @@ require_once 'controllers/personaController.php';
 require_once 'controllers/rolController.php';
 require_once 'models/sexoModel.php';
 require_once 'models/cursoModel.php';
+require_once 'models/paraleloModel.php';
 
 class UsuarioController
 {
@@ -22,7 +23,6 @@ class UsuarioController
     public function __construct()
     {
         $this->cors = new Cors();
-        $this->db = new Conexion();
         $this->personaController = new PersonaController();
         $this->rolCtr = new Rol();
     }
@@ -190,6 +190,7 @@ class UsuarioController
 
                         $docente = new Docente;
                         $docente->persona_id = $id_pers;
+                        $docente->materias_asignadas = 0;
                         $docente->estado = 'A';
                         $docente->save();
                     }
@@ -410,16 +411,16 @@ class UsuarioController
                 'usuario' => null,
             ];
         } else {
-            $curso_dis = Curso::find($curso_id);
-            if ($curso_dis->capacidad == $curso_dis->total_estudiantes) {
+            $paralelo_dis = Paralelo::find($paralelo_id);
+            if ($paralelo_dis->capacidad == $paralelo_dis->total_estudiantes) {
                 $response = [
                     'status' => false,
-                    'mensaje' => 'No hay cupos disponibles para el curso',
+                    'mensaje' => 'No hay cupos disponibles para el paralelo',
                     'estudiante' => null,
                 ];
             } else {
-                $curso_dis->total_estudiantes += 1;
-                $curso_dis->save();
+                $paralelo_dis->total_estudiantes += 1;
+                $paralelo_dis->save();
                 $resPersona = $this->personaController->guardarPersona($request);
     
                 $id_pers = $resPersona['persona']->id;
@@ -461,7 +462,7 @@ class UsuarioController
                             'mensaje' => 'Se ha guardado el estudiante',
                             'usuario' => $usuario,
                             'estudiante' => $estudiante,
-                            'curso' => $curso_dis,
+                            'paralelo' => $paralelo_dis,
                         ];
                     } else {
                         $response = [

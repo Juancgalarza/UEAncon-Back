@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class Curso extends Model
 {
     protected $table = "curso";
-    protected $fillable = ['jornada_id','nombre_curso','capacidad','total_estudiantes','estado'];
+    protected $fillable = ['jornada_id','nombre_curso','estado'];
     public $timestamps = false;
 
     public function curso_materia()

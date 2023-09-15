@@ -15,7 +15,6 @@ class EstudiantesController
     public function __construct()
     {
         $this->cors = new Cors();
-        $this->db = new Conexion();
     }
 
     public function listarId($params)
@@ -175,9 +174,12 @@ class EstudiantesController
         foreach ($estudiante as $est) {
             $us = Usuario::find($est->persona_id);
             $url = BASE . 'resources/usuarios/' . $us->img;
-            $botones = '<div class="btn-group">
+            $botones = '<div>
                     <button class="btn btn-primary btn-sm" onclick="calificarEstudiante(' . $est->id . ')">
                         <i class="fa fa-pencil-square fa-lg"></i>Calificar
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="calificarEstudianteExamen(' . $est->id . ')">
+                        <i class="fa fa-pencil-square fa-lg"></i>Exámen
                     </button>
                 </div>';
 

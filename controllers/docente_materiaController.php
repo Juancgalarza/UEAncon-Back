@@ -47,19 +47,29 @@ class Docente_MateriaController
                     'mensaje' => 'La materia ya fue asignada',
                 ];
             } else {
-                if ($nuevoDocenteMateria->save()) {
-                    $response = [
-                        'status' => true,
-                        'mensaje' => 'Se ha realizado la Asignación',
-                        'docente_materia' => $nuevoDocenteMateria,
-                    ];
-                } else {
+                $materias_asignadas = Docente::find($docente_id);
+                if ($materias_asignadas->materias_asignadas == 4) {
                     $response = [
                         'status' => false,
-                        'mensaje' => 'No se pudo realizar la Asiganción',
-                        'docente_materia' => null,
+                        'mensaje' => 'El docente seleccionado ya tiene un límite de materias asignadas',
                     ];
-                }
+                } else {
+                $materias_asignadas->materias_asignadas += 1;
+                $materias_asignadas->save();
+                    if ($nuevoDocenteMateria->save()) {
+                        $response = [
+                            'status' => true,
+                            'mensaje' => 'Se ha realizado la Asignación',
+                            'docente_materia' => $nuevoDocenteMateria,
+                        ];
+                    } else {
+                        $response = [
+                            'status' => false,
+                            'mensaje' => 'No se pudo realizar la Asiganción',
+                            'docente_materia' => null,
+                        ];
+                    }    
+                } 
             }
         } else {
             $response = [
